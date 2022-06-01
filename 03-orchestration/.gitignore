@@ -2,6 +2,8 @@ data/
 .ipynb_checkpoints
 models/*
 mlruns/*
+artifacts/
 .vscode/
 ./DS_Store
 *.db
+prefect_config.md
