@@ -147,13 +147,13 @@ def main(train_path: str="./data/green_tripdata_2021-01.parquet",
 
 from prefect.deployments import DeploymentSpec
 from prefect.orion.schemas.schedules import IntervalSchedule
-from prefect.flow_runners import SubprocessFlowRunner  # Run as python script locally
+from prefect.flow_runners import SubprocessFlowRunner
 from datetime import timedelta
 
 DeploymentSpec(
     flow=main,
     name="model_training",
-    schedule=IntervalSchedule(interval=timedelta(minutes=5)),
+    schedule=IntervalSchedule(interval=timedelta(minutes=15)),
     flow_runner=SubprocessFlowRunner(),  # Running locally with local storage as script.
     tags=["ml"]
 )
