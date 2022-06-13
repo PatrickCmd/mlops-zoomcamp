@@ -3,3 +3,9 @@ data/
 .bin
 mlruns/
 *.db
+*.parquet
+*.html
+*.csv
+.venv
+venv
+.idea
