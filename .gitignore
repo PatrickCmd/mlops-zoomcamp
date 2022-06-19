@@ -9,3 +9,5 @@ mlruns/
 .venv
 venv
 .idea
+**/artifacts/
+**/models/
