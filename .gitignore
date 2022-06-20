@@ -7,7 +7,9 @@ mlruns/
 *.html
 *.csv
 .venv
+.env
 venv
 .idea
 **/artifacts/
 **/models/
+.vscode/

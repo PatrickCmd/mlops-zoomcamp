@@ -4,6 +4,9 @@ import pickle
 import mlflow
 from flask import Flask, request, jsonify
 
+from dotenv import load_dotenv
+load_dotenv()
+
 
 RUN_ID = os.getenv('RUN_ID')
 
