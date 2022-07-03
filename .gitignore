@@ -13,3 +13,4 @@ venv
 **/artifacts/
 **/models/
 .vscode/
+__pycache__/
