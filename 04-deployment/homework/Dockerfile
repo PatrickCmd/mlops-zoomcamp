@@ -15,3 +15,5 @@ COPY [ "Pipfile", "Pipfile.lock", "./" ]
 RUN pipenv install --system --deploy
 
 COPY ["starter.py", "./"]
+COPY [ "model2.bin", "model.bin" ]
+    
