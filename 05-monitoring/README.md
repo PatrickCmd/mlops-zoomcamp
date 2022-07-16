@@ -42,7 +42,16 @@
 
 ## 5.6 Homework
 
-COMING SOON
+No homework. But you can send us feedback using 
+[this form](https://forms.gle/fb7dJKjyb1oeNeAz9) 
+
+
+## Notes
+
+Did you take notes? Add them here:
+
+* [Week 5 notes by M. Ayoub C.](https://gist.github.com/Qfl3x/aa6b1bec35fb645ded0371c46e8aafd1)
+* Send a PR, add your notes above this line
 
 
 
