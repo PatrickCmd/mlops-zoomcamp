@@ -6,14 +6,18 @@ services:
     environment:
       - PREDICTIONS_STREAM_NAME=${PREDICTIONS_STREAM_NAME}
       - RUN_ID=Test123
-      - AWS_DEFAULT_REGION=eu-west-1
+      - AWS_ACCESS_KEY_ID=abc
+      - AWS_SECRET_ACCESS_KEY=xyz
+      - AWS_DEFAULT_REGION=us-east-1
       - MODEL_LOCATION=/app/model
       - KINESIS_ENDPOINT_URL=http://kinesis:4566/
     volumes:
       - "./model:/app/model"
+    depends_on:
+      - kinesis
   kinesis:
-    image: localstack/localstack
+    image: localstack/localstack-full
     ports:
       - "4566:4566"
     environment:
-      - SERVICES=kinesis
+      - SERVICES=kinesis,s3,lambda,ec2

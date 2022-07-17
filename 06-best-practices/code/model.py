@@ -8,6 +8,7 @@ import mlflow
 
 def get_model_location(run_id):
     model_location = os.getenv('MODEL_LOCATION')
+    print(f"model_location: {model_location}")
 
     if model_location is not None:
         return model_location
