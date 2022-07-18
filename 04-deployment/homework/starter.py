@@ -43,13 +43,7 @@ def main(year, month):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--year",
-        help="the year the model is used for predictions."
-    )
-    parser.add_argument(
-        "--month",
-        help="the month the model is used for predictions."
-    )
+    parser.add_argument("--year", help="the year the model is used for predictions.")
+    parser.add_argument("--month", help="the month the model is used for predictions.")
     args = parser.parse_args()
     main(int(args.year), int(args.month))

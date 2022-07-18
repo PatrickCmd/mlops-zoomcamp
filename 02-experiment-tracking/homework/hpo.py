@@ -33,14 +33,14 @@ def run(data_path, num_trials):
             rmse = mean_squared_error(y_valid, y_pred, squared=False)
             mlflow.log_metric("rmse", rmse)
 
-        return {'loss': rmse, 'status': STATUS_OK}
+        return {"loss": rmse, "status": STATUS_OK}
 
     search_space = {
-        'max_depth': scope.int(hp.quniform('max_depth', 1, 20, 1)),
-        'n_estimators': scope.int(hp.quniform('n_estimators', 10, 50, 1)),
-        'min_samples_split': scope.int(hp.quniform('min_samples_split', 2, 10, 1)),
-        'min_samples_leaf': scope.int(hp.quniform('min_samples_leaf', 1, 4, 1)),
-        'random_state': 42
+        "max_depth": scope.int(hp.quniform("max_depth", 1, 20, 1)),
+        "n_estimators": scope.int(hp.quniform("n_estimators", 10, 50, 1)),
+        "min_samples_split": scope.int(hp.quniform("min_samples_split", 2, 10, 1)),
+        "min_samples_leaf": scope.int(hp.quniform("min_samples_leaf", 1, 4, 1)),
+        "random_state": 42,
     }
 
     rstate = np.random.default_rng(42)  # for reproducible results
@@ -50,23 +50,23 @@ def run(data_path, num_trials):
         algo=tpe.suggest,
         max_evals=num_trials,
         trials=Trials(),
-        rstate=rstate
+        rstate=rstate,
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--data_path",
         default="./output",
-        help="the location where the processed NYC taxi trip data was saved."
+        help="the location where the processed NYC taxi trip data was saved.",
     )
     parser.add_argument(
         "--max_evals",
         type=int,
         default=50,
-        help="the number of parameter evaluations for the optimizer to explore."
+        help="the number of parameter evaluations for the optimizer to explore.",
     )
     args = parser.parse_args()
 

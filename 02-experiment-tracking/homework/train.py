@@ -19,7 +19,7 @@ def load_pickle(filename: str):
 
 
 def run(data_path):
-    
+
     with mlflow.start_run():
         X_train, y_train = load_pickle(os.path.join(data_path, "train.pkl"))
         X_valid, y_valid = load_pickle(os.path.join(data_path, "valid.pkl"))
@@ -31,13 +31,13 @@ def run(data_path):
         rmse = mean_squared_error(y_valid, y_pred, squared=False)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--data_path",
         default="./output",
-        help="the location where the processed NYC taxi trip data was saved."
+        help="the location where the processed NYC taxi trip data was saved.",
     )
     args = parser.parse_args()
 

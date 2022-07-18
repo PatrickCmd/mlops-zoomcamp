@@ -79,7 +79,7 @@ resource "aws_iam_role_policy" "inline_lambda_policy" {
 EOF
 }
 
-# IAM for CW
+# IAM for CW (Cloud Watch)
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_trigger_lambda_function" {
   statement_id  = "AllowExecutionFromCloudWatch"

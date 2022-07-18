@@ -22,43 +22,48 @@ def dump_pickle(obj, filename):
 def get_paths(date):
     logger = get_run_logger()
     url_prefix = "https://nyc-tlc.s3.amazonaws.com/trip+data/"
-    
+
     # 2 months back and previous month
     prev_month = (date - relativedelta(months=1)).strftime("%Y-%m")
     prev_2_month = (date - relativedelta(months=2)).strftime("%Y-%m")
     logger.info(f"Previous month: {prev_month}")
     logger.info(f"Previous second month: {prev_2_month}")
-    
+
     train_filename = f"fhv_tripdata_{prev_2_month}.parquet"
     val_filename = f"fhv_tripdata_{prev_month}.parquet"
-    
-    if os.path.exists(f"./data/{train_filename}") and os.path.exists(f"./data/{val_filename}"):
+
+    if os.path.exists(f"./data/{train_filename}") and os.path.exists(
+        f"./data/{val_filename}"
+    ):
         logger.info(f"Train path: ./data/{train_filename} already exists")
         logger.info(f"Val path: ./data/{val_filename} already exists")
     else:
         logger.info("Downloading training and validation datasets")
-        status1 = os.system(f"wget {url_prefix}{train_filename} -O ./data/{train_filename}")
+        status1 = os.system(
+            f"wget {url_prefix}{train_filename} -O ./data/{train_filename}"
+        )
         status2 = os.system(f"wget {url_prefix}{val_filename} -O ./data/{val_filename}")
         if status1 != 0 and status2 != 0:
             return "ERROR 404: File Not Found"
-    
+
     train_path = f"./data/{train_filename}"
     val_path = f"./data/{val_filename}"
-    
+
     return train_path, val_path
-    
-    
+
+
 @task(name="Read data")
 def read_data(path):
     df = pd.read_parquet(path)
     return df
 
+
 @task(name="Prepare features")
 def prepare_features(df, categorical, train=True):
     logger = get_run_logger()
-    
-    df['duration'] = df.dropOff_datetime - df.pickup_datetime
-    df['duration'] = df.duration.dt.total_seconds() / 60
+
+    df["duration"] = df.dropOff_datetime - df.pickup_datetime
+    df["duration"] = df.duration.dt.total_seconds() / 60
     df = df[(df.duration >= 1) & (df.duration <= 60)].copy()
 
     mean_duration = df.duration.mean()
@@ -66,17 +71,18 @@ def prepare_features(df, categorical, train=True):
         logger.info(f"The mean duration of training is {mean_duration}")
     else:
         logger.info(f"The mean duration of validation is {mean_duration}")
-    
-    df[categorical] = df[categorical].fillna(-1).astype('int').astype('str')
+
+    df[categorical] = df[categorical].fillna(-1).astype("int").astype("str")
     return df
+
 
 @task(name="Train Model")
 def train_model(df, categorical):
     logger = get_run_logger()
 
-    train_dicts = df[categorical].to_dict(orient='records')
+    train_dicts = df[categorical].to_dict(orient="records")
     dv = DictVectorizer()
-    X_train = dv.fit_transform(train_dicts) 
+    X_train = dv.fit_transform(train_dicts)
     y_train = df.duration.values
 
     logger.info(f"The shape of X_train is {X_train.shape}")
@@ -89,12 +95,13 @@ def train_model(df, categorical):
     logger.info(f"The MSE of training is: {mse}")
     return lr, dv
 
+
 @task(name="Run model")
 def run_model(df, categorical, dv, lr):
     logger = get_run_logger()
-    
-    val_dicts = df[categorical].to_dict(orient='records')
-    X_val = dv.transform(val_dicts) 
+
+    val_dicts = df[categorical].to_dict(orient="records")
+    X_val = dv.transform(val_dicts)
     y_pred = lr.predict(X_val)
     y_val = df.duration.values
 
@@ -102,31 +109,31 @@ def run_model(df, categorical, dv, lr):
     logger.info(f"The MSE of validation is: {mse}")
     return
 
+
 @flow(task_runner=SequentialTaskRunner(), name="Model training hw")
 def main(date=None):
     logger = get_run_logger()
 
-    categorical = ['PUlocationID', 'DOlocationID']
-    
+    categorical = ["PUlocationID", "DOlocationID"]
+
     # Get train and validation file paths
     if date is None:
         date = datetime.today()
     else:
         date = datetime.strptime(date, "%Y-%m-%d")
-    
+
     train_path, val_path = get_paths(date).result()
-    
+
     df_train = read_data(train_path)
     df_train_processed = prepare_features(df_train, categorical)
 
     df_val = read_data(val_path)
     df_val_processed = prepare_features(df_val, categorical, train=False)
-    
 
     # train the model
     lr, dv = train_model(df_train_processed, categorical).result()
     run_model(df_val_processed, categorical, dv, lr)
-    
+
     # Saving dictvectorizer and model for given date
     logger.info("Saving dictvectorizer and model for given date.")
     date_str = date.strftime("%Y-%m-%d")
@@ -137,9 +144,6 @@ def main(date=None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--date",
-        help="the date the model is trained at."
-    )
+    parser.add_argument("--date", help="the date the model is trained at.")
     args = parser.parse_args()
     main(args.date)
